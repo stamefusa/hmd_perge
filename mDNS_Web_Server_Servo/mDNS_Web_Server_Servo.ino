@@ -22,9 +22,10 @@
 #include <Servo.h>
 
 const char* ssid = "SSID";
-const char* password = "PASSWD";
+const char* password = "PASS";
 
 Servo servo;
+Servo servo2;
 
 // TCP server at port 80 will respond to HTTP requests
 WiFiServer server(80);
@@ -32,7 +33,9 @@ WiFiServer server(80);
 void setup(void)
 {
   servo.attach(12);
+  servo2.attach(14);
   servo.write(90);
+  servo2.write(90);
   Serial.begin(115200);
   
   // Connect to WiFi network
@@ -106,6 +109,8 @@ void loop(void)
   String s;
   if (req == "/")
   {
+    servo.write(90);
+    servo2.write(90);
     IPAddress ip = WiFi.localIP();
     String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
     s = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>Hello from ESP8266 at ";
@@ -114,9 +119,11 @@ void loop(void)
     Serial.println("Sending 200");
   } else if (req == "/rotate") {
     servo.write(60);
+    servo2.write(100);
     s = "HTTP/1.1 200 OK\r\n<!DOCTYPE HTML><html>Motor is rotated.</html>";
   } else if (req == "/reverse") {
     servo.write(100);
+    servo2.write(60);
     s = "HTTP/1.1 200 OK\r\n<!DOCTYPE HTML><html>Motor is reversed.</html>";
   
   } else {
